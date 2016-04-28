@@ -1,12 +1,12 @@
 ---
-- hosts: bcec_all
+- hosts: bcec_ha
         vars:
                 http_port: 80
                 max_clients: 200
         remote_user: root
         tasks:
-        - name: install ntp
-          apt: package=ntpd state=present update_cache=yes
+        - name: install haproxy
+          apt: package=haproxy state=present update_cache=yes
           tags: ntp
 
         - name: copy over the ntp configuration

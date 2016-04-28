@@ -1,0 +1,20 @@
+---
+- hosts: bcec_all
+        vars:
+                http_port: 80
+                max_clients: 200
+        remote_user: root
+        tasks:
+        - name: make journal dir
+          file: path=/var/log/journal state=directory mode=0755
+          notify:
+                - restart journal
+          tags: journal
+
+        - name: ensure journal is started up
+          service: name=systemd-journald state=started enabled=yes
+          tags: journal
+
+        handlers:
+        - name: restart journal
+          service: name=systemd-journald state=restarted

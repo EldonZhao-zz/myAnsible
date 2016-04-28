@@ -1,0 +1,36 @@
+---
+- hosts: bcec_ha
+        vars:
+                http_port: 80
+                max_clients: 200
+        remote_user: root
+        tasks:
+        - name: install keepalived
+          apt: package=keepalived state=present update_cache=yes
+          tags: keepalived
+          
+        - name: install ipvsadm
+          apt: package=ipvsadm state=present update_cache=yes
+          tags: keepalived
+
+        - name: copy over the keepalived configuration for master
+          template: src=keepalived_master.conf dest=/etc/keepalived.conf
+          notify:
+                - restart keepalived
+          tags: keepalived
+          when: ansible_hostname == {{ hostvars[bcec_ha][0][hostname] }}
+          
+        - name: copy over the keepalived configuration for backup
+          template: src=keepalived_backup.conf dest=/etc/keepalived.conf
+          notify:
+                - restart keepalived
+          tags: keepalived
+          when: ansible_hostname == {{ hostvars[bcec_ha][1][hostname] }}
+
+        - name: ensure keepalived is started up
+          service: name=keepalived state=started enabled=yes
+          tags: keepalived
+
+        handlers:
+        - name: restart keepalived
+          service: name=keepalived state=restarted

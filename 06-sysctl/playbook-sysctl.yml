@@ -1,0 +1,30 @@
+---
+- hosts: bcec_all
+        vars:
+                http_port: 80
+                max_clients: 200
+        remote_user: root
+        tasks:
+        - name: append block to sysctl.conf
+          blockinfile:
+            dest: /etc/sysctl.conf
+            block: |
+                net.bridge.bridge-nf-call-iptables = 1
+                net.ipv4.ip_nonlocal_bind=1
+                net.nf_conntrack_max=1048576
+                net.ipv4.tcp_keepalive_intvl=3
+                net.ipv4.tcp_keepalive_time=30
+                net.ipv4.tcp_keepalive_probes=8
+                net.ipv4.tcp_retries2=5
+            create: yes
+          tags: sysctl
+
+        - name: configure and reload sysctl
+          sysctl: name="net.bridge.bridge-nf-call-iptables" value=1 reload=yes
+          sysctl: name="net.ipv4.ip_nonlocal_bind" value=1 reload=yes
+          sysctl: name="net.nf_conntrack_max" value=1048576 reload=yes
+          sysctl: name="net.ipv4.tcp_keepalive_intvl" value=3 reload=yes
+          sysctl: name="net.ipv4.tcp_keepalive_time" value=30 reload=yes
+          sysctl: name="net.ipv4.tcp_keepalive_probes" value=8 reload=yes
+          sysctl: name="net.ipv4.tcp_retries2" value=5 reload=yes
+          tags: sysctl

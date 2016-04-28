@@ -1,0 +1,24 @@
+---
+- hosts: bcec_all
+        vars:
+                http_port: 80
+                max_clients: 200
+        remote_user: root
+        tasks:
+        - name: install memcached
+          yum: name=memcached state=installed
+          tags: memcached
+
+        - name: copy over the memcached configuration
+          template: src=memcached dest=/etc/sysconfig/memcached
+          notify:
+                - restart memcached
+          tags: memcached
+
+        - name: ensure memcached is started up
+          service: name=memcached state=started enabled=yes
+          tags: memcached
+
+        handlers:
+        - name: restart memcached
+          service: name=memcached state=restarted
