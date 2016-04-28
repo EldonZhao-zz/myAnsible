@@ -1,0 +1,29 @@
+---
+
+- hosts: bcec_cpt
+        vars:
+                http_port: 80
+                max_clients: 200
+        remote_user: root
+        tasks:
+        - name: install iptables(use shell to install packages)
+          shell: "yum -y install sysfsutils qemu* libvirt*"
+          tags: libvirt
+
+        - name: copy over the libvirt configuration
+          template: src=libvirtd.conf dest=/etc/libvirt/libvirtd.conf
+          tags: libvirt
+          
+        - name: copy over the libvirtd
+          template: src=libvirtd dest=/etc/sysconfig/libvirtd
+          notify:
+                - restart libvirt
+          tags: libvirt
+
+        - name: ensure libvirt is started up
+          service: name=libvirtd state=started enabled=yes
+          tags: libvirt
+
+        handlers:
+        - name: restart libvirt
+          service: name=libvirtd state=restarted

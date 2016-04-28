@@ -1,0 +1,64 @@
+---
+- hosts: bcec_ctl
+        vars:
+                http_port: 80
+                max_clients: 200
+        remote_user: root
+        tasks:
+        - name: install iptables
+          apt: package=iptables state=present update_cache=yes
+          tags: iptables
+
+        - name: stop firewalld service
+          shell: "systemctl stop firewalld && systemctl disable firewalld"
+          tags: iptables
+
+        - name: copy over the iptables configuration
+          template: src=iptables_ctl.conf dest=/root/iptables_ctl
+          tags: iptables
+          
+        - name: append iptables_ctl to iptables
+          shell: "cat /root/iptables_ctl >> /etc/sysconfig/iptables"
+          notify:
+                - restart iptables
+          tags: iptables
+
+        - name: ensure iptables is started up
+          service: name=iptables state=started enabled=yes
+          tags: iptables
+
+        handlers:
+        - name: restart iptables
+          service: name=iptables state=restarted
+          
+- hosts: bcec_cpt
+        vars:
+                http_port: 80
+                max_clients: 200
+        remote_user: root
+        tasks:
+        - name: install iptables
+          apt: package=iptables state=present update_cache=yes
+          tags: iptables
+
+        - name: stop firewalld service
+          shell: "systemctl stop firewalld && systemctl disable firewalld"
+          tags: iptables
+
+        - name: copy over the iptables configuration
+          template: src=iptables_cpt.conf dest=/root/iptables_cpt
+          tags: iptables
+          
+        - name: append iptables_cpt to iptables
+          shell: "cat /root/iptables_cpt >> /etc/sysconfig/iptables"
+          notify:
+                - restart iptables
+          tags: iptables
+
+        - name: ensure iptables is started up
+          service: name=iptables state=started enabled=yes
+          tags: iptables
+
+        handlers:
+        - name: restart iptables
+          service: name=iptables state=restarted
