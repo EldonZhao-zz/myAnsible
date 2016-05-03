@@ -1,9 +1,6 @@
 ---
-
-tasks:
-
-    - include: ntp/playbook-ntp.yml
-      tags: ntp
+- include: 01-ntp/playbook-ntp.yml
+  tags: ntp
   
-    - include: iptables/playbook-iptables.yml
-      tags: iptables
+- include: 02-iptables/playbook-iptables.yml
+  tags: iptables

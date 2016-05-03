@@ -1,28 +1,32 @@
 ---
 - hosts: bcec_all
-        vars:
-                http_port: 80
-                max_clients: 200
-        remote_user: root
-        tasks:
-        - name: install ntp
-          apt: package=ntpd state=present update_cache=yes
-          tags: ntp
+  vars:
+    http_port: 80
+    max_clients: 200
+  remote_user: root
+  tasks:
+  - name: install ntp
+    yum: name=ntp state=present update_cache=yes
+    tags: ntp
 
-        - name: copy over the ntp configuration
-          template: src=ntp.conf dest=/etc/ntp.conf
-          notify:
-                - restart ntp
-                - force ntp update
-          tags: ntp
+  - name: copy over the ntp configuration
+    template: src=ntp.conf dest=/etc/ntp.conf
+    notify:
+          - stop ntp
+          - force ntp update
+          - restart ntp
+    tags: ntp
 
-        - name: ensure ntp is started up
-          service: name=ntpd state=started enabled=yes
-          tags: ntp
+  - name: ensure ntp is started up
+    service: name=ntpd state=started enabled=yes
+    tags: ntp
 
-        handlers:
-        - name: restart ntp
-          service: name=ntpd state=restarted
+  handlers:
+  - name: stop ntp
+    service: name=ntpd state=stop
 
-        -name: force ntp update
-          shell: "service ntpd stop && ntpdate -s {{hostvars[groups[bcec_ntp][0]]}} && hwclock --systohc && sevice ntpd restart"
+  - name: force ntp update
+    shell: "ntpdate -s {{ groups['bcec_ntp'][0] }} && hwclock --systohc"
+
+  - name: restart ntp
+    service: name=ntpd state=restart
