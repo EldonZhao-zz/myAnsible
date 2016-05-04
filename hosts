@@ -5,7 +5,7 @@ bcec_ctl
 [bcec_cpt]
 [bcec_ctl]
 [bcec_ha]
-10.1.1.1 host_name=yfy-ha-0 bond=bond0
+10.1.1.1 hostname=yfy-ha-0 bond=bond0
 [bcec_vip]
 [bcec_ceilometer_collector]
 [memcache_ip_addresses]

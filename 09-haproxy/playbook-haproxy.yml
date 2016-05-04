@@ -1,28 +1,24 @@
 ---
 - hosts: bcec_ha
-        vars:
-                http_port: 80
-                max_clients: 200
-        remote_user: root
-        tasks:
-        - name: install haproxy
-          apt: package=haproxy state=present update_cache=yes
-          tags: ntp
+  vars:
+    http_port: 80
+    max_clients: 200
+  remote_user: root
+  tasks:
+  - name: install haproxy
+    yum: package=haproxy state=present update_cache=yes
+    tags: haproxy
 
-        - name: copy over the ntp configuration
-          template: src=ntp.conf dest=/etc/ntp.conf
-          notify:
-                - restart ntp
-                - force ntp update
-          tags: ntp
+  - name: copy over the haproxy configuration
+    template: src=haproxy.cfg dest=/etc/haproxy/haproxy.cfg
+    notify:
+      - restart haproxy
+    tags: haproxy
 
-        - name: ensure ntp is started up
-          service: name=ntpd state=started enabled=yes
-          tags: ntp
+  - name: ensure haproxy is started up
+    service: name=haproxy state=started enabled=yes
+    tags: haproxy
 
-        handlers:
-        - name: restart ntp
-          service: name=ntpd state=restarted
-
-        -name: force ntp update
-          shell: "service ntpd stop && ntpdate -s {{hostvars[groups[bcec_ntp][0]]}} && hwclock --systohc && sevice ntpd restart"
+  handlers:
+  - name: restart haproxy
+    service: name=haproxy state=restarted

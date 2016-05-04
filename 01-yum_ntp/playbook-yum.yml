@@ -1,0 +1,19 @@
+---
+- hosts: bcec_all
+  vars:
+    http_port: 80
+    max_clients: 200
+  remote_user: root
+  tasks:
+  - name: clear directory
+    file: path=/etc/yum.repos.d/ state=absent
+    tags: ntp
+
+  - name: create directory
+    file: path=/etc/yum.repos.d/ state=directory
+
+  - name: copy over new repo
+    copy: src=BC-Linux.repo dest=/etc/yum.repos.d/BigCloud7.2.repo
+
+  - name: update yum
+    shell: "yum clean all && yum makecache"

@@ -1,6 +1,25 @@
 ---
-- include: 01-ntp/playbook-ntp.yml
-  tags: ntp
+#- include: 01-yum_ntp/playbook-yum.yml
+#  tags: yum
+
+#- include: 01-yum_ntp/playbook-ntp.yml
+#  tags: ntp
   
-- include: 02-iptables/playbook-iptables.yml
-  tags: iptables
+#- include: 02-iptables/playbook-iptables.yml
+#  tags: iptables
+
+#- include: 03-libvirt/playbook-libvirt.yml
+#  tags: libvirt
+
+#- include: 04-journald/playbook-journald.yml
+#  tags: journal
+
+#- include: 05-selinux/playbook-selinux.yml
+#  tags: selinux
+
+#- include: 06-sysctl/playbook-sysctl.yml
+#  tags: sysctl
+
+- include: 07-memcached/playbook-memcached.yml
+  tags: memcached
+
