@@ -1,10 +1,10 @@
 ---
 - hosts: bcec_all
-        vars:
-                http_port: 80
-                max_clients: 200
-        remote_user: root
-        tasks:
-        - name: disable selinux
-          selinux: state=disabled
-          tags: selinux
+  vars:
+    http_port: 80
+    max_clients: 200
+  remote_user: root
+  tasks:
+  - name: disable selinux
+    selinux: state=disabled
+    tags: selinux

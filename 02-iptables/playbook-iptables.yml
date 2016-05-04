@@ -5,8 +5,14 @@
     max_clients: 200
   remote_user: root
   tasks:
+  - name: remove iptable_ctl
+    shell: "rm -f iptables_ctl"
+    ignore_errors: yes
+    tags: iptables
+
   - name: install iptables
-    yum: name=iptables state=present update_cache=yes
+    shell: "yum -y install iptables*"
+    ignore_errors: yes
     tags: iptables
 
   - name: stop firewalld service
@@ -14,31 +20,32 @@
     tags: iptables
 
   - name: copy over the iptables configuration
-    template: src=iptables_ctl.conf dest=/root/iptables_ctl
-    tags: iptables
-    
-  - name: append iptables_ctl to iptables
-    shell: "cat /root/iptables_ctl >> /etc/sysconfig/iptables"
-    notify:
-          - restart iptables
+    template: src=iptables_ctl.conf dest=/etc/sysconfig/iptables
     tags: iptables
 
-  - name: ensure iptables is started up
-    service: name=iptables state=started enabled=yes
-    tags: iptables
-
-  handlers:
   - name: restart iptables
-    service: name=iptables state=restarted
-    
+    command: systemctl restart iptables
+    tags: iptables
+   
 - hosts: bcec_cpt
   vars:
     http_port: 80
     max_clients: 200
   remote_user: root
   tasks:
+  - name: remove iptable_ctl
+    shell: "rm -f iptables_ctl"
+    ignore_errors: yes
+    tags: iptables
+
+  - name: remove iptable_cpt
+    shell: "rm -f iptables_cpt"
+    ignore_errors: yes
+    tags: iptables
+
   - name: install iptables
-    yum: name=iptables state=present update_cache=yes
+    shell: "yum -y install iptables*"
+    ignore_errors: yes
     tags: iptables
 
   - name: stop firewalld service
@@ -46,19 +53,9 @@
     tags: iptables
 
   - name: copy over the iptables configuration
-    template: src=iptables_cpt.conf dest=/root/iptables_cpt
+    template: src=iptables_cpt.conf dest=/etc/sysconfig/iptables
     tags: iptables
     
-  - name: append iptables_cpt to iptables
-    shell: "cat /root/iptables_cpt >> /etc/sysconfig/iptables"
-    notify:
-          - restart iptables
-    tags: iptables
-
-  - name: ensure iptables is started up
-    service: name=iptables state=started enabled=yes
-    tags: iptables
-
-  handlers:
   - name: restart iptables
-    service: name=iptables state=restarted
+    command: systemctl restart iptables
+    tags: iptables
