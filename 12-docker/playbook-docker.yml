@@ -1,0 +1,15 @@
+---
+- hosts: bcec_ctl
+  vars:
+    http_port: 80
+    max_clients: 200
+  remote_user: root
+  tasks:
+  - name: install docker
+    yum: name=docker state=present update_cache=yes
+    tags: docker
+
+  - name: ensure docker is started up
+    service: name=dokcer state=started enabled=yes
+    tags: docker
+

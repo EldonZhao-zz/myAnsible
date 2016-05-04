@@ -33,12 +33,16 @@ playbooks for bcec deploying openstack servers
 -haproxy(no-test):
     ansible-playbook playbook-haproxy.yml
 -sql(drbd处理):
--rabbitmq():
--docker():
--openstack-util():
+-rabbitmq(no-test):
+    ansible-playbook playbook-rabbitmq.yml
+-docker(no-test):
+    ansible-playbook playbook-deocker.yml
+-openstack-util(no-test):
+    ansible-playbook playbook-openstack-util.yml
 -keystone():
 -glance():
--nova():
+-nova(compute-ok,rabbitmq的配置写死为跟控制节点ip一致，需要优化。):
+    ansible-playbook playbook-nova.yml
 -horizon():
 -cinder():
 -ceilometer():

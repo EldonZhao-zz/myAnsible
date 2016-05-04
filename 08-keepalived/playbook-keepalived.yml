@@ -18,14 +18,14 @@
     notify:
           - restart keepalived
     tags: keepalived
-    when: ansible_hostname == {{ hostvars[groups['bcec_ha'][0]].hostname }}
+    when: ansible_ssh_host == {{ groups['bcec_ha'][0]] }}
     
   - name: copy over the keepalived configuration for backup
     template: src=keepalived_backup.conf dest=/etc/keepalived.conf
     notify:
           - restart keepalived
     tags: keepalived
-    when: ansible_hostname == {{ hostvars[groups['bcec_ha'][1]].hostname }}
+    when: ansible_ssh_host == {{ groups['bcec_ha'][1]] }}
 
   - name: ensure keepalived is started up
     service: name=keepalived state=started enabled=yes

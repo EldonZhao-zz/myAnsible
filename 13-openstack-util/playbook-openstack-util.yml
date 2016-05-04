@@ -1,0 +1,10 @@
+---
+- hosts: bcec_all
+  vars:
+    http_port: 80
+    max_clients: 200
+  remote_user: root
+  tasks:
+  - name: install openstack utils
+    shell: "yum install openstack-utils"
+    tags: openstack-utils

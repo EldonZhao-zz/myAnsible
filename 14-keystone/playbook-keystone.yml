@@ -1,0 +1,90 @@
+---
+- hosts: groups['bcec_sql'][0]
+        remote_user: root
+        tasks:
+        - name: create keystone database
+          mysql_db: name=keystone state=present login_password={{ hostvars[groups['bcec_sql'][0]].passwd login_user=root
+          tags: keystone
+
+        - name: grant all privileges of keystone@localhost
+          mysql_user: name=keystone password={{ hostvars[groups['bcec_ctl'][0]].passwd }} priv=keystone.*:ALL,GRANT state=present login_password={{ hostvars[groups['bcec_sql'][0]].passwd login_user=root
+          tags: keystone
+
+        - name: grant all privileges of keystone@%
+          nysql_user: name=keystone host_all=yes login_password={{ hostvars[groups['bcec_sql'][0]].passwd login_user=root
+          tags: keystone
+
+- hosts: bcec_ctl
+        remote_user: root
+        tasks:
+        - name: install keystone
+          shell: "yum -y install openstack-keystone httpd mod_wsgi python-openstackclient python-memcached"
+          tags: keystone
+
+        - name: copy over the keystone configuration
+          template: src=keystone.conf dest=/etc/keystone/keystone.conf
+          tags: keystone
+
+        - name: generate PKI
+          shell: "keystone-manage pki_setup"
+          when: ansible_ssh_host == groups['bcec_ctl'][0]
+          tags: keystone
+
+        - name: copy pki file to other nodes
+          shell: "scp -r {{ groups['bcec_ctl'][0] }}:/etc/keystone/ssl /etc/keystone/  && chown -R keystone:keystone /etc/keystone/ && chown -R keystone:keystone /var/log/keystone/"
+          when: ansible_ssh_host != groups['bcec_ctl'][0]
+          tags: keystone
+
+        - name: init keystone database
+          shell: "su -s /bin/sh -c 'keystone-manage db_sync' keystone"
+          when: ansible_ssh_host == groups['bcec_ctl'][0]
+          tags: keystone
+
+        - name: copy wsgi-keystone configuration
+          template: src=wsgi-keystone.conf dest=/etc/httpd/conf.d/wsgi-keystone.conf
+          tags: keystone
+
+        - name: make dir /var/www/cgi-bin/keystone
+          file: path=/var/www/cgi-bin/keystone state=directory mode=0755
+          tags: keystone
+
+        - name: copy main file
+          copy: src=main dest=/var/www/cgi-bin/keystone/main
+          tags: keystone
+        
+        - name: copy main file to admin
+          shell: "cp /var/www/cgi-bin/keystone/main /var/www/cgi-bin/keystone/admin"
+          tags: keystone
+
+        - name: change ownership of keystone
+          shell: "chown -R keystone:keystone /var/www/cgi-bin/keystone && chmod 755 /var/www/cgi-bin/keystone/*"
+          tags: keystone
+
+        - name: enable and start httpd service
+          shell: "systemctl enable httpd.service && systemctl start httpd.service"
+          tags: keystone
+
+        - name: copy admin-openrc.sh
+          template: src=admin-openrc.sh dest=/root/admin-openrc.sh
+          tags: keystone
+
+        - name: source admin-openrc.sh
+          shell: "source admin-openrc.sh"
+          tags: keystone
+        
+        - name: init openstack service
+          shell: "openstack service create --name keystone --description 'OpenStack Identity' identity"
+          tags: keystone
+
+        - name: create openstack endpoint
+          shell: "openstack endpoint create --publicurl http://{{ groups['bcec_ctl'][0] }}:5000/v2.0 --internalurl http://{{ groups['bcec_ctl'][0] }}:5000/v2.0  --adminurl http://{{ groups['bcec_ctl'][0] }}:35357/v2.0 --region RegionOne identity"
+          tags: keystone
+
+        - name: create openstack project
+          shell: "openstack project create --description 'Admin Project' admin"
+          tags: keystone
+
+        - name: create openstack user
+          shell: "openstack user create --password-prompt admin"
+          
+          tags: keystone

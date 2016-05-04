@@ -1,0 +1,46 @@
+---
+- hosts: bcec_ctl
+  vars:
+    http_port: 80
+    max_clients: 200
+  remote_user: root
+  tasks:
+  - name: install rabbitmq
+    yum: package=rabbitmq-server state=present update_cache=yes
+    tags: rabbitmq
+
+  - name: copy over the ntp configuration
+    template: src=rabbitmq.config dest=/etc/rabbitmq/rabbitmq.config
+    tags: rabbitmq
+
+  - name: start rabbitmq node0
+    service: name=rabbitmq-server state=started enabled=yes
+    when: ansible_ssh_host == groups['bcec_ctl'][0]
+    tags: rabbitmq
+
+  - name: copy confoguration from rabbitmq node0
+    shell: "scp /var/lib/rabbitmq/.erlang.cookie root@{{ groups['bcec_ctl'][0] }}:/var/lib/rabbitmq/.erlang.cookie"
+    when: ansible_ssh_host != groups['bcec_ctl'][0]
+    tags: rabbitmq
+  
+  - name: change ownership of dir
+    shell: "chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie && chmod 400 /var/lib/rabbitmq/.erlang.cookie"
+    tags: rabbitmq
+
+  - name: restart all nodes
+    service: name=rabbitmq-server state=restart enabled=yes
+    tags: rabbitmq
+
+  - name: stop app and join cluster and start app
+    shell: "rabbitmqctl stop_app && rabbitmqctl join_cluster rabbit@{{ groups['bcec_ctl'][0] }} && rabbitmqctl start_app"
+    tags: rabbitmq
+    
+  - name: set ha-policy
+    shell: rabbitmqctl set_policy ha-all '^(?!amq\.).*' '{"ha-mode": "all"}'
+    tags: rabbitmq
+
+  - name: set permission
+    shell: "rabbitmqctl  set_permissions -p / nova '.*' '.*' '.*'"
+    tags: rabbitmq
+    
+

@@ -20,6 +20,50 @@
 #- include: 06-sysctl/playbook-sysctl.yml
 #  tags: sysctl
 
-- include: 07-memcached/playbook-memcached.yml
-  tags: memcached
+#- include: 07-memcached/playbook-memcached.yml
+#  tags: memcached
 
+#- include: 08-keepalived/playbook-keepalived.yml
+#  tags: keepalived
+
+#- include: 09-haproxy/playbook-haproxy.yml
+#  tags: haproxy
+
+#- include: 10-sql/playbook-sql.yml
+#  tags: sql
+
+#- include: 11-rabbitmq/playbook-rabbitmq.yml
+#  tags: rabbitmq
+
+#- include: 12-docker/playbook-docker.yml
+#  tags: docker
+
+#- include: 13-openstack-util/playbook-openstack-util.yml
+#  tags: openstack-util
+
+#- include: 14-keystone/playbook-keystone.yml
+#  tags: keystone
+
+#- include: 15-glance/playbook-glance.yml
+#  tags: glance
+
+- include: 16-nova/playbook-nova.yml
+  tags: nova
+
+#- include: 17-horizon/playbook-horizon.yml
+#  tags: horizon
+
+#- include: 18-cinder/playbook-cinder.yml
+#  tags: cinder
+
+#- include: 19-ceilometer/playbook-ceilometer.yml
+#  tags: ceilometer
+
+#- include: 20-portal/playbook-portal.yml
+#  tags: portal
+
+#- include: 21-heat/playbook-heat.yml
+#  tags: heat
+
+#- include: 22-senlin/playbook-senlin.yml
+#  tags: senlin
