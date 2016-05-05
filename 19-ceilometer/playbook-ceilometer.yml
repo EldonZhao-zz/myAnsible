@@ -1,0 +1,26 @@
+---
+- hosts: bcec_cpt
+        vars:
+                http_port: 80
+                max_clients: 200
+        remote_user: root
+        tasks:
+        - name: install ceilometer
+          shell: "yum install -y openstack-ceilometer-compute python-ceilometerclient python-pecan"
+          tags: ceilometer
+
+        - name: copy over the ceilometer configuration
+          template: src=ceilometer-cpt.conf dest=/etc/ceilometer/ceilometer.conf
+          tags: ceilometer
+
+        - name: copy over the pipeline yaml
+          template: src=pipeline.yaml dest=/etc/ceilometer/pipeline.yaml
+          tags: ceilometer
+
+        - name: enable and start ceilometer service
+          shell: "systemctl enable openstack-ceilometer-compute.service && systemctl start openstack-ceilometer-compute.service"
+          tags: ceilometer
+
+        - name: ensure ceilometer is started
+          service: name=openstack-ceilometer-compute status=started enabled=true
+          tags: ceilometer

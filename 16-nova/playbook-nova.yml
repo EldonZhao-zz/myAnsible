@@ -13,20 +13,25 @@
     yum: name=sysfsutils state=present update_cache=yes
     tags: nova
 
-  - name: copy over the ntp configuration
+  - name: copy over the nova configuration
     template: src=nova-cpt.conf dest=/etc/nova/nova.conf
-    notify:
-          - enable nova
-          - restart nova
     tags: nova
 
-  - name: ensure nova is started up
-    service: name=openstack-nova-compute state=started enabled=yes
+  - name: stop nova
+    shell: "systemctl stop openstack-nova-compute.service"
     tags: nova
 
-  handlers:
-  - name: enable nova
-    shell: "systemctl enable libvirtd.service openstack-nova-compute.service"
+  #- name: enable and start nova
+  #  shell: "systemctl enable libvirtd.service openstack-nova-compute.service && systemctl start libvirtd.service openstack-nova-compute.service"
+  #  tags: nova
 
-  - name: restart nova
-    shell: "systemctl start libvirtd.service openstack-nova-compute.service"
+  #- name: ensure nova is started up
+  #  service: name=openstack-nova-compute state=started enabled=yes
+  #  tags: nova
+
+  #handlers:
+  #- name: enable nova
+  #  shell: "systemctl enable libvirtd.service openstack-nova-compute.service"
+
+  #- name: restart nova
+  #  shell: "systemctl start libvirtd.service openstack-nova-compute.service"

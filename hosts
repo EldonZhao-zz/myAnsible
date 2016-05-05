@@ -4,7 +4,7 @@ bcec_cpt
 [bcec_ntp]
 [bcec_cpt]
 [bcec_ctl]
-10.1.1.0 passwd=123456
+10.1.1.0 passwd=123456 telemetry_secret=xsaxs
 [bcec_ha]
 10.1.1.1 hostname=yfy-ha-0 bond=bond0
 [bcec_vip]
@@ -13,5 +13,6 @@ bcec_cpt
 [bcec_sql]
 10.2.2.2 passwd=12345
 [bcec_ceilometer_collector]
+[bcec_ceilometer_clm_vip]
 [memcache_ip_addresses]
 

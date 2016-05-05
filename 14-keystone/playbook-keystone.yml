@@ -85,6 +85,11 @@
           tags: keystone
 
         - name: create openstack user
-          shell: "openstack user create --password-prompt admin"
+          expect:
+                command: "openstack user create --password-prompt admin"
+                responses:
+                        User Password: {{ hostvars[groups['bcec_ctl'][0]].passwd }}
+                        Repeat User Password: {{ hostvars[groups['bcec_ctl'][0]].passwd }}
+          tags: keystone
           
           tags: keystone
