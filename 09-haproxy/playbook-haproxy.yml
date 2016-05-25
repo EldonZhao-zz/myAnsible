@@ -9,6 +9,10 @@
     yum: package=haproxy state=present update_cache=yes
     tags: haproxy
 
+  - name: enable haproxy
+    shell: "systemctl enable haproxy.service"
+    tags: haproxy
+
   - name: copy over the haproxy configuration
     template: src=haproxy.cfg dest=/etc/haproxy/haproxy.cfg
     notify:
