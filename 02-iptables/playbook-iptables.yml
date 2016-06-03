@@ -5,11 +5,6 @@
     max_clients: 200
   remote_user: root
   tasks:
-  - name: remove iptable_ctl
-    shell: "rm -f iptables_ctl"
-    ignore_errors: yes
-    tags: iptables
-
   - name: install iptables
     shell: "yum -y install iptables*"
     ignore_errors: yes
@@ -33,14 +28,10 @@
     max_clients: 200
   remote_user: root
   tasks:
-  - name: remove iptable_ctl
-    shell: "rm -f iptables_ctl"
-    ignore_errors: yes
-    tags: iptables
 
   - name: remove iptable_cpt
     shell: "rm -f iptables_cpt"
-    ignore_errors: yes
+    pgnore_errors: yes
     tags: iptables
 
   - name: install iptables

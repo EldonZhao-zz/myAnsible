@@ -17,17 +17,17 @@
     template: src=nova-cpt.conf dest=/etc/nova/nova.conf
     tags: nova
 
-  - name: stop nova
-    shell: "systemctl stop openstack-nova-compute.service"
+  #- name: stop nova
+  #  shell: "systemctl stop openstack-nova-compute.service"
+  #  tags: nova
+
+  - name: enable and start nova
+    shell: "systemctl enable libvirtd.service openstack-nova-compute.service && systemctl start libvirtd.service openstack-nova-compute.service"
     tags: nova
 
-  #- name: enable and start nova
-  #  shell: "systemctl enable libvirtd.service openstack-nova-compute.service && systemctl start libvirtd.service openstack-nova-compute.service"
-  #  tags: nova
-
-  #- name: ensure nova is started up
-  #  service: name=openstack-nova-compute state=started enabled=yes
-  #  tags: nova
+  - name: ensure nova is started up
+    service: name=openstack-nova-compute state=started enabled=yes
+    tags: nova
 
   #handlers:
   #- name: enable nova

@@ -1,5 +1,4 @@
 ---
-
 - hosts: bcec_cpt
   vars:
     http_port: 80

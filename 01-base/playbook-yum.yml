@@ -13,7 +13,7 @@
     file: path=/etc/yum.repos.d/ state=directory
 
   - name: copy over new repo
-    copy: src=BC-Linux.repo dest=/etc/yum.repos.d/BigCloud7.2.repo
+    template: src=BC-Linux.repo dest=/etc/yum.repos.d/BigCloud7.2.repo
 
   - name: update yum
     shell: "yum clean all && yum makecache"

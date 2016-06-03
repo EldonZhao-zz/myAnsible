@@ -1,18 +1,17 @@
-# playbook-bcec
+# bcec-ansible
+一、工具概述：
 playbooks for bcec deploying openstack servers
+基于ansible开发的环境部署工具，提升部署效率。
 
--互信（一般运维帮忙做好）：
-	#互信的ansible做法：
-	ansible all -m copy -a "src=/root/.ssh/id_rsa.pub dest=/root" -k
-	ansible all -m shell -a "cat /root/id_rsa.pub >> /root/.ssh/authorized_keys"
-	ansible all -m shell -a "rm -f /root/id_rsa.pub"
-
+二、工具开发概况：
 -编辑/etc/ansible/hosts，建立如下分组：
  详见hosts文件
    
--yum源配置（一般运维帮忙做好）：
-
--yum配置（ok）：
+-ssh互信配置（一般运维帮忙做好）：
+	#互信的ansible做法是基于本地ssh做互信：
+	ansible all -m shell -a "cat /root/id_rsa.pub >> /root/.ssh/authorized_keys"
+	ansible all -m copy -a "src=/root/.ssh/ dest=/root"
+-yum源配置（ok）：
     ansible-playbook playbook-yum.yml
 -ntp配置（ok）：
     ansible-playbook playbook-ntp.yml
@@ -50,7 +49,9 @@ playbooks for bcec deploying openstack servers
 -heat():
 -senlin():
  
- 
+三、工具使用流程： 
+-本地安装ansible工具：
+	sudo apt-get install ansible
 -执行task：
 	执行所有task：
 	ansible-playbook example.yml

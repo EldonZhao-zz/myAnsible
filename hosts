@@ -1,18 +1,23 @@
-[bcec_all]
+[bcec_yum]
+10.11.1.1 port=8080
+[bcec_ntp]
+10.11.2.1
+10.11.2.2
+[bcec_memcache]
+10.11.3.0/24
+[bcec_all:children]
 bcec_ctl
 bcec_cpt
-[bcec_ntp]
 [bcec_cpt]
 [bcec_ctl]
-10.1.1.0 passwd=123456 telemetry_secret=xsaxs
+10.1.1.0 passwd=123456 telemetry_secret=xsaxs rabbit_userid=xxxx rabbit_passwd=xxxx
 [bcec_ha]
 10.1.1.1 hostname=yfy-ha-0 bond=bond0
 [bcec_vip]
 [bcec_neutron]
+10.11.1.1 passwd=As_9sx_X
 [bcec_sql_vip]
 [bcec_sql]
 10.2.2.2 passwd=12345
 [bcec_ceilometer_collector]
 [bcec_ceilometer_clm_vip]
-[memcache_ip_addresses]
-
